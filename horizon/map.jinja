@@ -9,6 +9,7 @@
             'gettext', 'python-lesscpy'],
         'ssl_pkgs': [dashboard_package],
         'service': 'apache2',
+        'policy_files_path': '/usr/share/openstack-dashboard/openstack_dashboard/conf',
         'config': '/etc/openstack-dashboard/local_settings.py',
         'apache_config': '/etc/apache2/conf-available/openstack-dashboard.conf',
         'apache_log_dir': '/var/log/apache2',
@@ -28,6 +29,7 @@
             'gettext', 'python-lesscpy'],
         'ssl_pkgs': ['mod_ssl'],
         'service': 'httpd',
+        'policy_files_path': '/usr/share/openstack-dashboard/openstack_dashboard/conf',
         'config': '/etc/openstack-dashboard/local_settings',
         'apache_config': '/etc/httpd/conf.d/openstack-dashboard.conf',
         'apache_log_dir': '/var/log/httpd',
@@ -40,3 +42,4 @@
         'cache': {'host': '127.0.0.1', 'port': 11211}
     },
 }, merge=salt['pillar.get']('horizon:server')) %}
+

@@ -24,6 +24,40 @@ horizon_config:
   - require:
     - pkg: horizon_packages
 
+{%- for policy_name, policy in server.get('policy', {}).iteritems() %}
+
+{%- if policy.get('enabled', True) %}
+{%- if policy.get('source', 'file') == 'mine' %}
+
+{%- set service_grains = salt['mine.get'](policy['host'], 'grains.items') %}
+{%- set service_policy = service_grains.get(policy['host'], {}).get(policy['grain_name'], {}) %}
+
+{%- if service_policy %}
+
+horizon_policy_{{ policy_name }}_mine:
+  file.serialize:
+  - name: {{ policy.get('path', server.get('policy_files_path')) }}/{{ policy.get('name') }}
+  - dataset: {{ service_policy }}
+  - formatter: JSON
+  - require:
+    - file: horizon_config
+
+{%- endif %}
+
+{%- elif policy.get('source', 'file') == 'file' %}
+
+horizon_policy_{{ policy_name }}_file:
+  file.managed:
+  - name: {{ policy.get('path', server.get('policy_files_path')) }}/{{ policy.get('name') }}
+  - source: salt://horizon/files/policy/{{ server.version }}/{{ policy.get('name') }}
+  - require:
+    - file: horizon_config
+
+{%- endif %}
+{%- endif %}
+
+{%- endfor %}
+
 horizon_apache_port_config:
   file.managed:
   - name: {{ server.port_config_file }}

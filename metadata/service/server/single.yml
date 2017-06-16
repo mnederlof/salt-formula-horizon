@@ -14,7 +14,9 @@ parameters:
       enabled: true
       version: ${_param:horizon_version}
       secret_key: ${_param:horizon_secret_key}
-      session_timeout: 43200
+      session:
+        timeout: 43200
+        engine: 'signed_cookies'
       bind:
         address: ${_param:single_address}
         port: 80
@@ -37,3 +39,33 @@ parameters:
         host: ${_param:horizon_identity_host}
         encryption: ${_param:horizon_identity_encryption}
         endpoint_type: ${_param:horizon_identity_endpoint_type}
+      policy:
+        identity:
+          source: file
+          name: keystone_policy.json
+          enabled: true
+        compute:
+          source: file
+          name: nova_policy.json
+          enabled: true
+        network:
+          source: file
+          name: neutron_policy.json
+          enabled: true
+        image:
+          source: file
+          name: glance_policy.json
+          enabled: true
+        volume:
+          source: file
+          name: cinder_policy.json
+          enabled: true
+        telemetry:
+          source: file
+          name: ceilometer_policy.json
+          enabled: true
+        orchestration:
+          source: file
+          name: heat_policy.json
+          enabled: true
+

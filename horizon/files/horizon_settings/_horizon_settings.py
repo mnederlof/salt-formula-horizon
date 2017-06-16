@@ -20,21 +20,18 @@
 # OpenStack services are using to determine role based access control in the
 # target installation.
 
-{%- if server.session_timeout is defined %}
-SESSION_TIMEOUT = {{ server.session_timeout }}
-{%- endif %}
+SESSION_TIMEOUT = {{ server.get('session', {}).get('timeout', 3600) }}
+SESSION_ENGINE = "django.contrib.sessions.backends.{{ server.get('session', {}).get('engine', 'signed_cookies') }}"
 
 # Path to directory containing policy.json files
-#POLICY_FILES_PATH = os.path.join(ROOT_PATH, "conf")
+POLICY_FILES_PATH = "{{ server.get('policy_files_path') }}"
 # Map of local copy of service policy files
 POLICY_FILES = {
-    'identity': 'keystone_policy.json',
-    'compute': 'nova_policy.json',
-    'network': 'neutron_policy.json',
-    'image': 'glance_policy.json',
-    'volume': 'cinder_policy.json',
-    'telemetry': 'ceilometer_policy.json',
-    'orchestration': 'heat_policy.json'
+    {%- for policy_name, policy in app.get('policy', {}).iteritems() %}
+    {%- if policy.get('enabled', True) %}
+    "{{ policy_name }}": "{{ policy.get('name') }}",
+    {%- endif %}
+    {%- endfor %}
 }
 
 LOGGING = {
