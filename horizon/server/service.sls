@@ -86,6 +86,13 @@ horizon_log_file:
     - require:
       - file: horizon_log_dir
 
+/etc/logrotate.d/horizon:
+  file.managed:
+  - source: salt://horizon/files/horizon_logrotate.conf
+  - user: root
+  - group: root
+  - mode: 644
+
 {%- if grains.get('virtual_subtype', None) == "Docker" %}
 
 horizon_entrypoint:
